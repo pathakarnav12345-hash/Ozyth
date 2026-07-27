@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ozyth — Know Your True Self</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #0d0b12;
+    --ink-2: #14111c;
+    --gold: #c9a24b;
+    --gold-soft: #e8d4a0;
+    --ember: #7a3b3b;
+    --mist: #a89fc2;
+    --paper: #f3ede0;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  h1,h2,h3, .display{
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  /* ---------- background convergence lines ---------- */
+  .converge-bg{
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.55;
+  }
+  .converge-bg svg{ width:100%; height:100%; }
+  .converge-line{
+    stroke: var(--gold);
+    stroke-width: 0.4;
+    opacity: 0.25;
+    fill: none;
+  }
+  .converge-point{
+    fill: var(--gold);
+    opacity: 0.9;
+  }
+
+  /* ---------- top contact bar ---------- */
+  .top-bar{
+    position: relative;
+    z-index: 3;
+    display: flex;
+    justify-content: center;
+    gap: 34px;
+    flex-wrap: wrap;
+    padding: 10px 6vw;
+    background: rgba(201,162,75,0.08);
+    border-bottom: 1px solid rgba(201,162,75,0.18);
+  }
+  .top-bar a{
+    color: var(--gold-soft);
+    text-decoration: none;
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+    transition: color 0.3s;
+  }
+  .top-bar a:hover{ color: var(--gold); }
+
+  @media (max-width: 600px){
+    .top-bar{ gap: 18px; font-size: 0.75rem; }
+  }
+
+  /* ---------- nav ---------- */
+  header{
+    position: relative;
+    z-index: 2;
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    padding: 28px 6vw;
+  }
+  .brand{
+    font-family:'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+  }
+  .brand span{ color: var(--paper); opacity:0.6; font-size:0.65em; display:block; letter-spacing:0.2em; margin-top:2px; }
+  nav a{
+    color: var(--mist);
+    text-decoration:none;
+    font-size:0.85rem;
+    letter-spacing:0.08em;
+    margin-left: 28px;
+    transition: color 0.3s;
+  }
+  nav a:hover{ color: var(--gold-soft); }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    z-index:2;
+    min-height: 88vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding: 6vw;
+  }
+  .eyebrow{
+    color: var(--gold);
+    font-size: 0.78rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 1.2s ease forwards 0.2s;
+  }
+  .hero h1{
+    font-size: clamp(2.6rem, 6vw, 5rem);
+    line-height: 1.08;
+    max-width: 16ch;
+    color: var(--paper);
+    opacity:0;
+    animation: fadeUp 1.2s ease forwards 0.5s;
+  }
+  .hero h1 em{
+    font-style: italic;
+    color: var(--gold-soft);
+  }
+  .hero p.sub{
+    margin-top: 26px;
+    max-width: 46ch;
+    font-size: 1.08rem;
+    line-height:1.7;
+    color: var(--mist);
+    opacity:0;
+    animation: fadeUp 1.2s ease forwards 0.8s;
+  }
+  .hero .cta-row{
+    margin-top: 42px;
+    display:flex;
+    gap: 18px;
+    opacity:0;
+    animation: fadeUp 1.2s ease forwards 1.1s;
+  }
+  @keyframes fadeUp{
+    from{ opacity:0; transform: translateY(18px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+
+  .btn{
+    display:inline-block;
+    padding: 15px 34px;
+    border-radius: 2px;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration:none;
+    cursor:pointer;
+    border: 1px solid var(--gold);
+    transition: all 0.35s ease;
+  }
+  .btn-solid{
+    background: var(--gold);
+    color: var(--ink);
+  }
+  .btn-solid:hover{ background: var(--gold-soft); border-color: var(--gold-soft); }
+  .btn-ghost{
+    color: var(--gold-soft);
+    background: transparent;
+  }
+  .btn-ghost:hover{ background: rgba(201,162,75,0.1); }
+
+  /* ---------- truth strip ---------- */
+  .truth-strip{
+    position:relative; z-index:2;
+    border-top: 1px solid rgba(201,162,75,0.2);
+    border-bottom: 1px solid rgba(201,162,75,0.2);
+    padding: 22px 6vw;
+    display:flex;
+    justify-content:center;
+    gap: 60px;
+    flex-wrap: wrap;
+    background: rgba(255,255,255,0.02);
+  }
+  .truth-strip span{
+    font-family:'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--mist);
+  }
+
+  /* ---------- section shared ---------- */
+  section{ position:relative; z-index:2; padding: 110px 6vw; }
+  .section-inner{ max-width: 980px; margin: 0 auto; }
+  .kicker{
+    color: var(--gold);
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .section-title{
+    font-size: clamp(2rem, 4vw, 3rem);
+    max-width: 20ch;
+    margin-bottom: 26px;
+  }
+  .lede{
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--mist);
+    max-width: 60ch;
+  }
+
+  /* ---------- the claim (astrology vs this) ---------- */
+  .claim-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-top: 60px;
+  }
+  .claim-card{
+    padding: 38px 34px;
+    border: 1px solid rgba(201,162,75,0.18);
+    background: linear-gradient(160deg, rgba(255,255,255,0.02), transparent);
+  }
+  .claim-card.no{ border-color: rgba(122,59,59,0.4); }
+  .claim-card .tag{
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display:block;
+  }
+  .claim-card.no .tag{ color: #b06a6a; }
+  .claim-card.yes .tag{ color: var(--gold); }
+  .claim-card h3{ font-size: 1.6rem; margin-bottom: 14px; }
+  .claim-card p{ color: var(--mist); line-height: 1.75; font-size: 0.98rem; }
+
+  @media (max-width: 720px){
+    .claim-grid{ grid-template-columns: 1fr; }
+  }
+
+  /* ---------- scripture row (signature element) ---------- */
+  .scripture-row{
+    margin-top: 90px;
+    display:flex;
+    flex-wrap: wrap;
+    gap: 0;
+    border-top: 1px solid rgba(201,162,75,0.2);
+  }
+  .scripture-item{
+    flex: 1 1 200px;
+    padding: 30px 22px;
+    border-right: 1px solid rgba(201,162,75,0.12);
+    border-bottom: 1px solid rgba(201,162,75,0.12);
+    text-align:center;
+    transition: background 0.3s;
+  }
+  .scripture-item:hover{ background: rgba(201,162,75,0.06); }
+  .scripture-item .name{
+    font-family:'Cormorant Garamond', serif;
+    font-size:1.25rem;
+    color: var(--gold-soft);
+    margin-bottom: 6px;
+  }
+  .scripture-item .tradition{
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mist);
+    opacity: 0.7;
+  }
+  .converge-caption{
+    text-align:center;
+    margin-top: 34px;
+    font-family:'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.3rem;
+    color: var(--gold-soft);
+  }
+  .converge-note{
+    text-align:center;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    letter-spacing: 0.03em;
+    color: var(--mist);
+    opacity: 0.85;
+  }
+
+  /* ---------- qualifications ---------- */
+  .quals{
+    margin-top: 50px;
+    display:grid;
+    gap: 22px;
+  }
+  .qual-row{
+    display:grid;
+    grid-template-columns: 140px 1fr;
+    gap: 24px;
+    padding: 22px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    align-items:baseline;
+  }
+  .qual-row .label{
+    color: var(--gold);
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .qual-row .value{
+    font-size: 1.05rem;
+    color: var(--paper);
+    line-height: 1.6;
+  }
+  .qual-row .value.muted{ color: var(--mist); }
+
+  @media (max-width: 600px){
+    .qual-row{ grid-template-columns: 1fr; gap: 6px; }
+  }
+
+  /* ---------- founder's note ---------- */
+  .note-block{
+    max-width: 68ch;
+    margin-top: 50px;
+    padding: 36px 40px;
+    border-left: 2px solid var(--gold);
+    background: rgba(255,255,255,0.02);
+  }
+  .note-block .note-lang{
+    color: var(--gold);
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .note-block p{
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    line-height: 1.85;
+    color: var(--paper);
+    margin-bottom: 18px;
+  }
+  .note-block p:last-child{ margin-bottom: 0; }
+
+  @media (max-width: 600px){
+    .note-block{ padding: 26px 22px; }
+  }
+
+  /* ---------- form section ---------- */
+  .contact-wrap{
+    background: var(--ink-2);
+    border-top: 1px solid rgba(201,162,75,0.2);
+  }
+  .contact-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 70px;
+    max-width: 1080px;
+    margin: 0 auto;
+    align-items: start;
+  }
+  .contact-info h2{ font-size: 2.2rem; margin-bottom: 20px; }
+  .contact-info p{ color: var(--mist); line-height:1.8; margin-bottom: 34px; }
+  .info-line{
+    display:flex;
+    align-items:center;
+    gap: 14px;
+    margin-bottom: 18px;
+    font-size: 1.02rem;
+    color: var(--gold-soft);
+  }
+  .info-line .icon{
+    width: 34px; height: 34px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size: 0.85rem;
+    flex-shrink:0;
+  }
+  .info-line a{ color: inherit; text-decoration:none; }
+  .info-line a:hover{ text-decoration: underline; }
+
+  form{ display:flex; flex-direction:column; gap: 18px; }
+  .field{ display:flex; flex-direction:column; gap: 8px; }
+  .field label{
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--mist);
+  }
+  .field input, .field textarea{
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.25);
+    padding: 10px 2px;
+    color: var(--paper);
+    font-family: 'Jost', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  .field input:focus, .field textarea:focus{ border-color: var(--gold); }
+  .field textarea{ resize: vertical; min-height: 90px; }
+  form .btn{ margin-top: 12px; width: fit-content; }
+  .form-note{
+    font-size: 0.8rem;
+    color: var(--mist);
+    opacity: 0.7;
+    margin-top: 6px;
+  }
+
+  @media (max-width: 800px){
+    .contact-grid{ grid-template-columns: 1fr; gap: 44px; }
+  }
+
+  footer{
+    position:relative; z-index:2;
+    text-align:center;
+    padding: 40px 6vw 50px;
+    color: var(--mist);
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    border-top: 1px solid rgba(201,162,75,0.12);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .eyebrow, .hero h1, .hero p.sub, .hero .cta-row{ animation: none; opacity:1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="converge-bg" aria-hidden="true">
+  <svg viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice">
+    <line class="converge-line" x1="50" y1="80" x2="500" y2="500"/>
+    <line class="converge-line" x1="950" y1="60" x2="500" y2="500"/>
+    <line class="converge-line" x1="20" y1="500" x2="500" y2="500"/>
+    <line class="converge-line" x1="980" y1="480" x2="500" y2="500"/>
+    <line class="converge-line" x1="120" y1="950" x2="500" y2="500"/>
+    <line class="converge-line" x1="880" y1="970" x2="500" y2="500"/>
+    <line class="converge-line" x1="500" y1="10" x2="500" y2="500"/>
+    <line class="converge-line" x1="500" y1="990" x2="500" y2="500"/>
+    <circle class="converge-point" cx="500" cy="500" r="3"/>
+  </svg>
+</div>
+
+<div class="top-bar">
+  <a href="tel:+919119068206">📞 +91 91190 68206</a>
+  <a href="mailto:consultordctr@gmail.com">✉ consultordctr@gmail.com</a>
+  <a href="https://instagram.com/consultordctr" target="_blank" rel="noopener">📸 @consultordctr</a>
+</div>
+
+<header>
+  <div class="brand">Ozyth<span>One Truth Consultation</span></div>
+  <nav>
+    <a href="#truth">The Truth</a>
+    <a href="#scriptures">The Study</a>
+    <a href="#contact">Consult</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">Beyond Astrology · Beyond Prediction</div>
+  <h1>Know your <em>true self.</em><br>Know the <em>purpose</em> you are here for.</h1>
+  <p class="sub">Astrology tells you what might happen. It does not tell you why you are here. This is guidance built on years of studying every major scripture — to help you find the one thread running through all of them, and through you.</p>
+  <div class="cta-row">
+    <a href="#contact" class="btn btn-solid">Book a Consultation</a>
+    <a href="#truth" class="btn btn-ghost">Read More</a>
+  </div>
+</section>
+
+<div class="truth-strip">
+  <span>"Different paths."</span>
+  <span>"One truth."</span>
+  <span>"One purpose."</span>
+</div>
+
+<section id="truth">
+  <div class="section-inner">
+    <div class="kicker">The Truth</div>
+    <h2 class="section-title">Astrology is guesswork dressed up as certainty.</h2>
+    <p class="lede">Real answers don't come from the position of stars on the day you were born. They come from understanding who you are, why you think the way you think, and what you're actually here to do. That is not something a chart can tell you — but it is something every major spiritual tradition has been trying to say, in its own language, for thousands of years.</p>
+
+    <div class="claim-grid">
+      <div class="claim-card no">
+        <span class="tag">What Astrology Offers</span>
+        <h3>Predictions</h3>
+        <p>A forecast based on your birth chart. It tells you what may happen to you — without ever asking why you're here, or what you're meant to do with it.</p>
+      </div>
+      <div class="claim-card yes">
+        <span class="tag">What This Offers</span>
+        <h3>Understanding</h3>
+        <p>Guidance drawn from every major scripture and philosophy, connected into one framework — so you understand your purpose, not just your predictions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="scriptures">
+  <div class="section-inner">
+    <div class="kicker">The Study</div>
+    <h2 class="section-title">Every scripture. One point they all arrive at.</h2>
+    <p class="lede">Years spent reading, studying, and connecting the philosophies of every major tradition — not to compare them, but to find where they agree. I have spent years trying to understand the meaning of life, and what a person should do when they're faced with any problem life throws at them.</p>
+
+    <div class="scripture-row">
+      <div class="scripture-item"><div class="name">Bhagavad Gita</div><div class="tradition">Hindu Philosophy</div></div>
+      <div class="scripture-item"><div class="name">Quran</div><div class="tradition">Islamic Philosophy</div></div>
+      <div class="scripture-item"><div class="name">Bible</div><div class="tradition">Christian Philosophy</div></div>
+      <div class="scripture-item"><div class="name">Guru Granth Sahib</div><div class="tradition">Sikh Philosophy</div></div>
+      <div class="scripture-item"><div class="name">Dhammapada</div><div class="tradition">Buddhist Philosophy</div></div>
+    </div>
+    <p class="converge-caption">Different scriptures. Different languages. The same point of origin.</p>
+    <p class="converge-note">— and every other religion, philosophy, and spiritual text that exists.</p>
+
+    <div class="kicker" style="margin-top:60px;">Consultant's Knowledge</div>
+    <div class="quals">
+      <div class="qual-row">
+        <div class="label">Scriptures & Texts</div>
+        <div class="value">Bhagavad Gita, Quran, Bible, Guru Granth Sahib, Dhammapada, and texts from every other religion and spiritual tradition that exists.</div>
+      </div>
+      <div class="qual-row">
+        <div class="label">Counseling & Psychology</div>
+        <div class="value">Principles of counseling and psychology, used alongside spiritual understanding to guide real, grounded conversations.</div>
+      </div>
+      <div class="qual-row">
+        <div class="label">Method</div>
+        <div class="value muted">One-on-one consultation. No charts, no predictions — a conversation built to help you understand your own purpose.</div>
+      </div>
+      <div class="qual-row">
+        <div class="label">Offering</div>
+        <div class="value muted">Real guidance for people looking for meaning, direction, or clarity — not a forecast.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="founder-note">
+  <div class="section-inner">
+    <div class="kicker">Founder's Note</div>
+    <h2 class="section-title">Why I built Ozyth.</h2>
+
+    <div class="note-block">
+      <p class="note-lang">English</p>
+      <p>I want to tell you why I made Ozyth.</p>
+      <p>A few years ago, my life was going through a rough patch. My exam scores were dropping, and I was stuck in a habit I couldn't seem to break. I tried a lot of things, watched YouTube, read articles, but everywhere I looked, the advice was different. Someone would say one thing was fine, someone else would say the exact opposite. The confusion just kept growing, and I never got a real answer.</p>
+      <p>Then I started reading spiritual texts and holy books, from every religion I could find. As my understanding grew, the habit I was stuck in fell away, and the confusion around my relationships and career started clearing up too.</p>
+      <p>A lot of people get stuck in the same loop I was in, different videos, different opinions, everyone saying something different. It wastes time and never actually gives you clarity.</p>
+      <p>I don't want you to lose the time I lost. That's why I built Ozyth, so that the understanding it took me years to find can reach you in a single conversation.</p>
+    </div>
+
+    <div class="note-block">
+      <p class="note-lang">Hinglish</p>
+      <p>Main aapko batana chahta hoon ki maine Ozyth kyun banaya.</p>
+      <p>Kuch saal pehle meri zindagi mushkil daur se guzar rahi thi. Mere exams mein marks gir rahe the, aur main ek aisi habit mein phasa hua tha jisse nikalna mushkil lag raha tha. Maine bahut tareeke try kiye, YouTube dekha, articles padhe, par har jagah alag salah milti thi. Koi kehta kuch sahi hai, koi kehta wahi galat hai. Confusion aur badh gaya, solution nahi mila.</p>
+      <p>Phir maine spiritual texts aur holy books padhna shuru kiya, har dharam ke granth, jo bhi mujhe mil saka. Jaise jaise samajh aati gayi, meri addiction chhoot gayi, aur mere relationship aur career ke confusions bhi clear hone lage.</p>
+      <p>Bahut log mere jaisi hi loop mein phase hote hain, alag alag videos, alag alag opinions, koi kuch kehta hai koi kuch. Time waste hota hai, clarity nahi milti.</p>
+      <p>Main nahi chahta ki aap wahi waqt zaya karo jo maine kiya. Isliye maine Ozyth banaya, taaki jo samajh mujhe saalon mein mili, wo aapko ek conversation mein mil sake.</p>
+    </div>
+  </div>
+</section>
+
+<section class="contact-wrap" id="contact">
+  <div class="section-inner contact-grid">
+    <div class="contact-info">
+      <div class="kicker">Consult</div>
+      <h2>Let's talk.</h2>
+      <p>Share a little about what you're looking for. Every message reaches me directly — I read and respond to each one personally.</p>
+
+      <div class="info-line">
+        <span class="icon">☎</span>
+        <a href="tel:+919119068206">+91 91190 68206</a>
+      </div>
+      <div class="info-line">
+        <span class="icon">✉</span>
+        <a href="mailto:consultordctr@gmail.com">consultordctr@gmail.com</a>
+      </div>
+    </div>
+
+    <form action="https://formsubmit.co/consultordctr@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="New Consultation Request">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_template" value="table">
+
+      <div class="field">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="Name" required>
+      </div>
+      <div class="field">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="Phone" required>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="Email" required>
+      </div>
+      <div class="field">
+        <label for="message">What are you looking for guidance on?</label>
+        <textarea id="message" name="Message"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-solid">Send Request</button>
+      <p class="form-note">Your details go straight to consultordctr@gmail.com — you'll be contacted personally.</p>
+    </form>
+  </div>
+</section>
+
+<footer>
+  Ozyth — Beyond Astrology, Beyond Prediction · +91 91190 68206 · consultordctr@gmail.com
+</footer>
+
+</body>
+</html>
